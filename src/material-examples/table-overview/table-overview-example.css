@@ -2,7 +2,6 @@
 .example-container {
   display: flex;
   flex-direction: column;
-  max-height: 500px;
   min-width: 300px;
 }
 
@@ -17,10 +16,9 @@
   border-bottom: 1px solid transparent;
 }
 
-.mat-input-container {
+.mat-form-field {
   font-size: 14px;
   flex-grow: 1;
-  margin-left: 32px;
   margin-top: 8px;
 }
 
@@ -35,8 +33,6 @@
 /** Selection styles */
 .example-selection-header {
   font-size: 18px;
-  background: rgba(255, 64, 129, 0.3);
-  border-bottom: 1px solid #d696ac;
 }
 
 .mat-column-select {
@@ -53,4 +49,5 @@
 
 .mat-table {
   overflow: auto;
+  max-height: 500px;
 }

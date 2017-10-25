@@ -1,4 +1,4 @@
-import {Key, protractor, browser, by, element} from 'protractor';
+import {Key, protractor, browser, by, element, ExpectedConditions} from 'protractor';
 import {screenshot} from '../screenshot';
 import {
   expectToExist,
@@ -7,6 +7,9 @@ import {
   expectLocation,
   pressKeys,
 } from '../util/index';
+
+const presenceOf = ExpectedConditions.presenceOf;
+const not = ExpectedConditions.not;
 
 
 describe('menu', () => {
@@ -50,14 +53,15 @@ describe('menu', () => {
     screenshot();
   });
 
-  it('should support multiple triggers opening the same menu', () => {
+  it('should support multiple triggers opening the same menu', async () => {
     page.triggerTwo().click();
 
     expect(page.menu().getText()).toEqual('One\nTwo\nThree\nFour');
     expectAlignedWith(page.menu(), '#trigger-two');
 
     page.backdrop().click();
-    expectToExist(menuSelector, false);
+    await browser.wait(not(presenceOf(element(by.css(menuSelector)))));
+    await browser.wait(not(presenceOf(element(by.css('.cdk-overlay-backdrop')))));
 
     page.trigger().click();
 
@@ -65,12 +69,15 @@ describe('menu', () => {
     expectAlignedWith(page.menu(), '#trigger');
 
     page.backdrop().click();
-    expectToExist(menuSelector, false);
+
+    await browser.wait(not(presenceOf(element(by.css(menuSelector)))));
+    await browser.wait(not(presenceOf(element(by.css('.cdk-overlay-backdrop')))));
   });
 
   it('should mirror classes on host to menu template in overlay', () => {
     page.trigger().click();
-    expect(page.menu().getAttribute('class')).toContain('mat-menu-panel custom');
+    expect(page.menu().getAttribute('class')).toContain('mat-menu-panel');
+    expect(page.menu().getAttribute('class')).toContain('custom');
   });
 
   describe('keyboard events', () => {
@@ -90,9 +97,9 @@ describe('menu', () => {
       expectFocusOn(page.items(0));
     });
 
-    it('should not focus the first item when opened with mouse', () => {
+    it('should focus the panel when opened by mouse', () => {
       page.trigger().click();
-      expectFocusOn(page.trigger());
+      expectFocusOn(page.menu());
     });
 
     it('should focus subsequent items when down arrow is pressed', () => {
@@ -200,7 +207,7 @@ export class MenuPage {
   trigger = () => element(by.id('trigger'));
   triggerTwo = () => element(by.id('trigger-two'));
   backdrop = () => element(by.css('.cdk-overlay-backdrop'));
-  items = (index: number) => element.all(by.css('[md-menu-item]')).get(index);
+  items = (index: number) => element.all(by.css('[mat-menu-item]')).get(index);
   textArea = () => element(by.id('text'));
   beforeTrigger = () => element(by.id('before-t'));
   aboveTrigger = () => element(by.id('above-t'));
